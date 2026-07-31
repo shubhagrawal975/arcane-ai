@@ -6,3 +6,7 @@ app = FastAPI(title="Arcane AI", description="A personal multi-agent AI assistan
 def root():
     return {"message": "Arcane AI is alive."}
 
+@app.get("/status")
+def status():
+    return {"status": "Ok"}
+
