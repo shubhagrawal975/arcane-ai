@@ -7,6 +7,8 @@ class User(BaseModel):
     name: str
     age: int
 
+Users = []
+
 @app.get("/")
 def root():
     return {"message": "Welcome to Arcane AI."}
@@ -25,7 +27,12 @@ def greet(name: str = "User"):
 
 @app.post("/user")
 def create_user(user: User):
-    return {"message": f"Welcome, {user.name}, age : {user.age}"}
+    Users.append(user)
+    return {"message": "User created successfully", "user": user}
+
+@app.get("/users")
+def get_users():
+    return {"users": Users}
 
 @app.get("/user/{user_id}")
 def get_user(user_id: int):
@@ -34,3 +41,4 @@ def get_user(user_id: int):
 @app.get("/items/{item_id}")
 def read_item(item_id: int, q: str = None):
     return {"item_id": item_id, "message": f"Item id is {item_id}", "query": q}
+
