@@ -1,6 +1,11 @@
 from fastapi import FastAPI
+from pydantic import BaseModel
 
 app = FastAPI(title="Arcane AI", description="A personal multi-agent AI assistant built with fastAPI.", version="0.1.0")
+
+class User(BaseModel):
+    name: str
+    age: int
 
 @app.get("/")
 def root():
@@ -17,3 +22,8 @@ def health():
 @app.get("/greet")
 def greet(name: str = "User"):
     return {"message": f"Hello, {name}! I am Arcane."}
+
+@app.post("/user")
+def create_user(user: User):
+    return {"message": f"Welcome, {user.name}, age : {user.age}"}
+
