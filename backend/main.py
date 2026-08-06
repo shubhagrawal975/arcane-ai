@@ -27,3 +27,10 @@ def greet(name: str = "User"):
 def create_user(user: User):
     return {"message": f"Welcome, {user.name}, age : {user.age}"}
 
+@app.get("/user/{user_id}")
+def get_user(user_id: int):
+    return {"user_id": user_id, "message": f"User id is {user_id}"}
+
+@app.get("/items/{item_id}")
+def read_item(item_id: int, q: str = None):
+    return {"item_id": item_id, "message": f"Item id is {item_id}", "query": q}
