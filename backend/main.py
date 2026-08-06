@@ -14,3 +14,6 @@ def status():
 def health():
     return {"status": "healthy"}
 
+@app.get("/greet")
+def greet(name: str = "User"):
+    return {"message": f"Hello, {name}! I am Arcane."}
