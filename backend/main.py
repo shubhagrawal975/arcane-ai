@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi import HTTPException
 from pydantic import BaseModel
 
 app = FastAPI(title="Arcane AI", description="A personal multi-agent AI assistant built with fastAPI.", version="0.1.0")
@@ -83,6 +84,21 @@ def delete_user(user_id: int):
             Users.remove(user)
             return {"message": f"User with id {user_id} deleted successfully."}
     return {"message": "User not found."}
+
+
+# ================================
+# Update User by ID Endpoint
+# ================================
+
+@app.put("/user/{user_id}")
+def update_user(user_id: int, update_user: User):
+    for user in Users:
+        if user["id"] == user_id:
+            user["name"] = update_user.name
+            user["age"] = update_user.age
+            return {"message": f"User with id {user_id} updated successfully.", "user": user}
+    
+    raise HTTPException(status_code=404, detail="User not found")
 
 
 # ================================
