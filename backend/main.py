@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi import HTTPException
 from pydantic import BaseModel
+from pydantic import Field
 
 app = FastAPI(title="Arcane AI", description="A personal multi-agent AI assistant built with fastAPI.", version="0.1.0")
 
@@ -16,9 +17,8 @@ next_user_id = 101
 # ================================
 
 class User(BaseModel):
-    name: str
-    age: int
-
+    name: str = Field(..., min_length=2, max_length=50, description="The name of the user")
+    age: int = Field(..., ge=1, le=120, description="The age of the user")
 
 # ================================
 # Basic Endpoints
@@ -40,7 +40,6 @@ def health():
 def greet(name: str = "User"):
     return {"message": f"Hello, {name}! I am Arcane."}
 
-
 # ================================
 # Create User Endpoint
 # ================================
@@ -59,8 +58,11 @@ def create_user(user: User):
 # ================================
 
 @app.get("/users")
-def get_users():
-    return {"users": Users}
+def get_users(min_age: int = 0, max_age: int = None, name: str = None):
+    filtered_users = [user for user in Users if user["age"] >= min_age and (max_age is None or user["age"] <= max_age)]
+    if name is not None:
+        filtered_users = [user for user in filtered_users if user["name"].lower() == name.lower()]
+    return {"users": filtered_users}
 
 # ================================
 # Get User by ID Endpoint
@@ -71,7 +73,7 @@ def get_user(user_id: int):
     for user in Users:
         if user["id"] == user_id:
             return {"user": user}
-    return {"message": "User not found."}
+    raise HTTPException(status_code=404, detail="User not found")
 
 # ================================
 # Delete User by ID Endpoint
@@ -83,7 +85,7 @@ def delete_user(user_id: int):
         if user["id"] == user_id:
             Users.remove(user)
             return {"message": f"User with id {user_id} deleted successfully."}
-    return {"message": "User not found."}
+    raise HTTPException(status_code=404, detail="User not found")
 
 
 # ================================
